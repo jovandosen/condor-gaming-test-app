@@ -1,3 +1,7 @@
 <?php
 
-echo 'Users page';
+use App\Mvc\Controllers\Controller;
+use App\Mvc\Models\Model;
+
+var_dump(new Controller());
+var_dump(new Model());

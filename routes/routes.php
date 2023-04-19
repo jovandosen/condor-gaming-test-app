@@ -1,12 +1,16 @@
 <?php
 
+// Request method
+$method = $_SERVER['REQUEST_METHOD'];
+
 // Request URI
 $uri = $_SERVER["REQUEST_URI"];
 
 // Define routes
 $routes = [
     '/' => 'home',
-    '/php-info' => 'php-info'
+    '/php-info' => 'php-info',
+    '/users' => 'users'
 ];
 
 $routeFound = false;

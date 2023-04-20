@@ -19,4 +19,9 @@ class User extends DbModel
 
         return $users;
     }
+
+    public function storeUser()
+    {
+        var_dump($_POST);
+    }
 }

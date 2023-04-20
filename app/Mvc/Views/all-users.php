@@ -10,7 +10,7 @@
     <body>
         <div id="user-data-container">
             <div id="user-form">
-                <div>
+                <div class="user-data-header">
                     <h3>Add User</h3>
                 </div>
                 <form action="users" method="POST">
@@ -35,12 +35,61 @@
                 </form>
             </div>
             <div id="user-table">
-                123
+                <?php if($users->num_rows > 0): ?>
+                    <div class="user-data-header">
+                        <h3>User List</h3>
+                    </div>
+                    <div>
+                        <table style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>FIRST NAME</th>
+                                    <th>LAST NAME</th>
+                                    <th>EMAIL</th>
+                                    <th>COUNTRY</th>
+                                    <th>CITY</th>
+                                    <th>CREATED</th>
+                                    <th>UPDATED</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while($row = $users->fetch_object()): ?>
+                                    <tr>
+                                        <td>
+                                            <?php echo $row->ID; ?>
+                                        </td>
+                                        <td>
+                                            <?php echo $row->FirstName; ?>
+                                        </td>
+                                        <td>
+                                            <?php echo $row->LastName; ?>
+                                        </td>
+                                        <td>
+                                            <?php echo $row->Email; ?>
+                                        </td>
+                                        <td>
+                                            <?php echo $row->Country; ?>
+                                        </td>
+                                        <td>
+                                            <?php echo $row->City; ?>
+                                        </td>
+                                        <td>
+                                            <?php echo $row->Created; ?>
+                                        </td>
+                                        <td>
+                                            <?php echo $row->Updated; ?>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>    
+                            </tbody>
+                        </table>
+                    </div> 
+                <?php else: ?>
+                    <h3>No users found.</h3>    
+                <?php endif; ?>
             </div>
         </div>
-        <?php
-            // var_dump($users);
-        ?>
         <script src="/assets/js/app.js"></script>
     </body>
 </html>

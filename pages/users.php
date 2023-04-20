@@ -8,7 +8,8 @@ $users = $userController->getAllUsers();
 
 if(isset($_POST["add_user"])) {
     $userController = new UserController();
-    $userController->storeUserData();
+    $response = $userController->storeUserData();
+    var_dump($response);
 }
 
 require_once __DIR__ . '/../app/Mvc/Views/all-users.php';

@@ -15,6 +15,6 @@ class UserController
     public function storeUserData()
     {
         $user = new User();
-        $user->storeUser();
+        return $user->storeUser();
     }
 }

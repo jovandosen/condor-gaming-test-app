@@ -3,6 +3,7 @@
 namespace App\Mvc\Models;
 
 use App\Mvc\Models\DbModel;
+use DOMDocument;
 
 class User extends DbModel
 {
@@ -45,7 +46,7 @@ class User extends DbModel
         }
 
         if($errors) {
-            $this->actionResponse(true, 401, $errors, []);
+            $this->jsonResponse(true, 401, $errors, []);
         }
 
         // prepare sql query, prepare function returns object or false
@@ -73,7 +74,7 @@ class User extends DbModel
         }
 
         if($errors) {
-            $this->actionResponse(true, 401, $errors, []);
+            $this->jsonResponse(true, 401, $errors, []);
         }
 
         // close prepared statement
@@ -88,10 +89,10 @@ class User extends DbModel
         // Success message
         $success = ["User stored successfully, new user id is: $newUserId."];
 
-        $this->actionResponse(false, 200, $success, []);
+        $this->jsonResponse(false, 200, $success, []);
     }
 
-    private function actionResponse($error, $code, $message, $data)
+    private function jsonResponse($error, $code, $message, $data)
     {
         // Define final response
         $finalResponse = [];
@@ -117,13 +118,77 @@ class User extends DbModel
         die();
     }
 
+    private function xmlResponse($code, $data)
+    {
+        // Create a new XML document
+        $doc = new DOMDocument('1.0');
+
+        // Create the root element
+        $root = $doc->createElement('data');
+        $root = $doc->appendChild($root);
+
+        // Loop through each data item and create a new XML element for it
+        foreach ($data as $item) {
+            $dataItem = $doc->createElement('user');
+            $dataItem = $root->appendChild($dataItem);
+            
+            $id = $doc->createElement('id');
+            $id->appendChild($doc->createTextNode($item->ID));
+            $dataItem->appendChild($id);
+            
+            $firstName = $doc->createElement('first-name');
+            $firstName->appendChild($doc->createTextNode($item->FirstName));
+            $dataItem->appendChild($firstName);
+            
+            $lastName = $doc->createElement('last-name');
+            $lastName->appendChild($doc->createTextNode($item->LastName));
+            $dataItem->appendChild($lastName);
+            
+            $email = $doc->createElement('email');
+            $email->appendChild($doc->createTextNode($item->Email));
+            $dataItem->appendChild($email);
+
+            $country = $doc->createElement('country');
+            $country->appendChild($doc->createTextNode($item->Country));
+            $dataItem->appendChild($country);
+
+            $city = $doc->createElement('city');
+            $city->appendChild($doc->createTextNode($item->City));
+            $dataItem->appendChild($city);
+
+            $created = $doc->createElement('created');
+            $created->appendChild($doc->createTextNode($item->Created));
+            $dataItem->appendChild($created);
+
+            $updated = $doc->createElement('updated');
+            $updated->appendChild($doc->createTextNode($item->Updated));
+            $dataItem->appendChild($updated);
+        }
+
+        // Set the content type header to XML
+        header('Content-Type: text/xml');
+
+        // set the HTTP response code
+        http_response_code($code);
+
+        // Output the XML document
+        echo $doc->saveXML();
+
+        // Kill the script
+        die();
+    }
+
     public function allUsersForApi()
     {
         $users = $this->conn->query("SELECT * FROM Users");
 
-        if(!$users) {
-            $msg = ["User data not received."];
-            $this->actionResponse(true, 401, $msg, []);
+        if(DATA_FORMAT === 'json') {
+            if(!$users) {
+                $msg = ["User data not received."];
+                $this->jsonResponse(true, 401, $msg, []);
+            }
+        } elseif(DATA_FORMAT === 'xml') {
+            //
         }
 
         $this->conn->close();
@@ -138,6 +203,10 @@ class User extends DbModel
 
         $msg = ["User data received successfully."];
 
-        $this->actionResponse(false, 200, $msg, $data);
+        if(DATA_FORMAT === 'json') {
+            $this->jsonResponse(false, 200, $msg, $data);
+        } elseif(DATA_FORMAT === 'xml') {
+            $this->xmlResponse(200, $data);
+        }
     }
 }

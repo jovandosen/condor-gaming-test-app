@@ -10,7 +10,8 @@ $uri = $_SERVER["REQUEST_URI"];
 $routes = [
     '/' => 'home',
     '/php-info' => 'php-info',
-    '/users' => 'users'
+    '/users' => 'users',
+    '/users-api' => 'users-api'
 ];
 
 $routeFound = false;

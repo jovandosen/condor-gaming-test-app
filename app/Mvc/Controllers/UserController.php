@@ -17,4 +17,10 @@ class UserController
         $user = new User();
         return $user->storeUser();
     }
+
+    public function getAllUsersForApi()
+    {
+        $user = new User();
+        return $user->allUsersForApi();
+    }
 }

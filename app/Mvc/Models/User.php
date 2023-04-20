@@ -45,7 +45,7 @@ class User extends DbModel
         }
 
         if($errors) {
-            $this->actionResponse(true, 401, $errors);
+            $this->actionResponse(true, 401, $errors, []);
         }
 
         // prepare sql query, prepare function returns object or false
@@ -73,7 +73,7 @@ class User extends DbModel
         }
 
         if($errors) {
-            $this->actionResponse(true, 401, $errors);
+            $this->actionResponse(true, 401, $errors, []);
         }
 
         // close prepared statement
@@ -88,17 +88,18 @@ class User extends DbModel
         // Success message
         $success = ["User stored successfully, new user id is: $newUserId."];
 
-        $this->actionResponse(false, 200, $success);
+        $this->actionResponse(false, 200, $success, []);
     }
 
-    private function actionResponse($error, $code, $message)
+    private function actionResponse($error, $code, $message, $data)
     {
         // Define final response
         $finalResponse = [];
 
         $response = [
             'error' => $error,
-            'message' => $message
+            'message' => $message,
+            'data' => $data
         ];
 
         $finalResponse = json_encode($response);
@@ -114,5 +115,29 @@ class User extends DbModel
 
         // Kill the script
         die();
+    }
+
+    public function allUsersForApi()
+    {
+        $users = $this->conn->query("SELECT * FROM Users");
+
+        if(!$users) {
+            $msg = ["User data not received."];
+            $this->actionResponse(true, 401, $msg, []);
+        }
+
+        $this->conn->close();
+
+        $data = [];
+
+        if($users->num_rows > 0) {
+            while($user = $users->fetch_object()) {
+                $data[] = $user;
+            }
+        }
+
+        $msg = ["User data received successfully."];
+
+        $this->actionResponse(false, 200, $msg, $data);
     }
 }

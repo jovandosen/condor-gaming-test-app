@@ -22,13 +22,14 @@ class User extends DbModel
 
     public function storeUser()
     {
+        // Collect form data
         $firstName = $_POST["fname"];
         $lastName = $_POST["lname"];
         $email = $_POST["email"];
         $country = $_POST["country"];
         $city = $_POST["city"];
 
-        // validate form data
+        // Validate form data
         $errors = [];
 
         if(empty($firstName)) {
@@ -44,12 +45,15 @@ class User extends DbModel
         }
 
         if($errors) {
-            echo 'ERRORS';
-            die();
+            $this->actionResponse(true, 401, $errors);
         }
 
         // prepare sql query, prepare function returns object or false
         $prepared = $this->conn->prepare("INSERT INTO Users(FirstName, LastName, Email, Country, City, Created, Updated) VALUES(?, ?, ?, ?, ?, ?, ?)");
+
+        if(!$prepared) {
+            $errors[] = "SQL query is not prepared correctly.";
+        }
 
         // current date and time
         $dateTime = date('Y-m-d H:i:s');
@@ -57,27 +61,58 @@ class User extends DbModel
         // bind user input fields, bind_param function returns true or false
         $binded = $prepared->bind_param("sssssss", $firstName, $lastName, $email, $country, $city, $dateTime, $dateTime);
 
-        //
+        if(!$binded) {
+            $errors[] = "Form data is not binded correctly.";
+        }
 
         // run query, execute function returns true or false
         $executed = $prepared->execute();
 
-        // if executed
-        if($executed) {
-            // close prepared statement
-            $prepared->close();
-
-            // get user id
-            $newUserId = $this->conn->insert_id; 
-
-            // close db connection
-            $this->conn->close();
-
-            return [
-                'id' => $newUserId
-            ];
+        if(!$executed) {
+            $errors[] = "Data is not stored correctly.";
         }
 
-        //
+        if($errors) {
+            $this->actionResponse(true, 401, $errors);
+        }
+
+        // close prepared statement
+        $prepared->close();
+
+        // get user id
+        $newUserId = $this->conn->insert_id; 
+
+        // close db connection
+        $this->conn->close();
+
+        // Success message
+        $success = ["User stored successfully, new user id is: $newUserId."];
+
+        $this->actionResponse(false, 200, $success);
+    }
+
+    private function actionResponse($error, $code, $message)
+    {
+        // Define final response
+        $finalResponse = [];
+
+        $response = [
+            'error' => $error,
+            'message' => $message
+        ];
+
+        $finalResponse = json_encode($response);
+
+        // set the appropriate headers
+        header('Content-Type: application/json');
+
+        // set the HTTP response code
+        http_response_code($code);
+
+        // Echo result
+        echo $finalResponse;
+
+        // Kill the script
+        die();
     }
 }

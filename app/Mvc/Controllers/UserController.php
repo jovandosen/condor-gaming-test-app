@@ -23,4 +23,10 @@ class UserController
         $user = new User();
         return $user->allUsersForApi();
     }
+
+    public function getUserData()
+    {
+        $user = new User();
+        return $user->getUserDataById();
+    }
 }

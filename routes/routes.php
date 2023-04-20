@@ -11,7 +11,8 @@ $routes = [
     '/' => 'home',
     '/php-info' => 'php-info',
     '/users' => 'users',
-    '/users-api' => 'users-api'
+    '/users-api' => 'users-api',
+    '/user' => 'user'
 ];
 
 $routeFound = false;

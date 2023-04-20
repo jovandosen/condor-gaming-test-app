@@ -51,6 +51,7 @@
                                     <th>CITY</th>
                                     <th>CREATED</th>
                                     <th>UPDATED</th>
+                                    <th>ACTIONS</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -79,6 +80,12 @@
                                         </td>
                                         <td>
                                             <?php echo $row->Updated; ?>
+                                        </td>
+                                        <td>
+                                            <form action="user" method="POST">
+                                                <input type="hidden" name="userID" value="<?php echo $row->ID; ?>">
+                                                <input type="submit" value="show">
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>    

@@ -4,6 +4,7 @@ namespace App\Mvc\Models;
 
 use App\Mvc\Models\DbModel;
 use DOMDocument;
+use Exception;
 
 class User extends DbModel
 {
@@ -208,5 +209,50 @@ class User extends DbModel
         } elseif(DATA_FORMAT === 'xml') {
             $this->xmlResponse(200, $data);
         }
+    }
+
+    public function getUserDataById()
+    {
+        if(!isset($_POST["userID"])) {
+            throw new Exception('User ID is not defined.');
+        }
+
+        $id = $_POST["userID"];
+
+        // prepare sql
+        $prepared = $this->conn->prepare("SELECT FirstName, LastName, Email, Country, City, Created, Updated FROM Users WHERE ID = ?");
+
+        if(!$prepared) {
+            throw new Exception('SQL query is not prepared correctly.');
+        }
+
+        // Bind id
+        $binded = $prepared->bind_param("i", $id);
+
+        if(!$binded) {
+            throw new Exception('User ID is not binded correctly.');
+        }
+
+        // Run query
+        $executed = $prepared->execute();
+
+        if(!$executed) {
+            throw new Exception('SQL query failed to execute.');
+        }
+
+        // Get result
+        $result = $prepared->get_result();
+
+        if(!$result) {
+            throw new Exception('Error while getting data from db.');
+        }    
+
+        $user = $result->fetch_object();
+
+        $prepared->close();
+
+        $this->conn->close();
+
+        return $user;
     }
 }

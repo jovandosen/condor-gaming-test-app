@@ -1,7 +1,9 @@
 <?php
 
-use App\Mvc\Controllers\Controller;
-use App\Mvc\Models\Model;
+use App\Mvc\Controllers\UserController;
 
-var_dump(new Controller());
-var_dump(new Model());
+$userController = new UserController();
+
+$users = $userController->getAllUsers();
+
+require_once __DIR__ . '/../app/Mvc/Views/all-users.php';

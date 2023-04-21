@@ -220,7 +220,7 @@ class User extends DbModel
         $id = $_POST["userID"];
 
         // prepare sql
-        $prepared = $this->conn->prepare("SELECT FirstName, LastName, Email, Country, City, Created, Updated FROM Users WHERE ID = ?");
+        $prepared = $this->conn->prepare("SELECT ID, FirstName, LastName, Email, Country, City, Created, Updated FROM Users WHERE ID = ?");
 
         if(!$prepared) {
             throw new Exception('SQL query is not prepared correctly.');
@@ -244,15 +244,25 @@ class User extends DbModel
         $result = $prepared->get_result();
 
         if(!$result) {
-            throw new Exception('Error while getting data from db.');
+            throw new Exception('Error while getting results from db.');
         }    
 
         $user = $result->fetch_object();
+
+        if(!$user) {
+            throw new Exception('Error while getting data from db.');
+        }
 
         $prepared->close();
 
         $this->conn->close();
 
-        return $user;
+        $msg = "User data received successfully.";
+
+        if(DATA_FORMAT === 'json') {
+            $this->jsonResponse(false, 200, $msg, [$user]);
+        } elseif(DATA_FORMAT === 'xml') {
+            $this->xmlResponse(200, [$user]);
+        }
     }
 }

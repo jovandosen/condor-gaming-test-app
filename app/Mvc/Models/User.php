@@ -51,7 +51,11 @@ class User extends DbModel
         }
 
         if($errors) {
-            $this->jsonResponse(true, 401, $errors, []);
+            if(DATA_FORMAT === 'json') {
+                $this->jsonResponse(true, 401, $errors, []);
+            } elseif(DATA_FORMAT === 'xml') {
+                $this->xmlResponse(401, "Missing data.", 'insert');
+            }
         }
 
         // prepare sql query, prepare function returns object or false
@@ -90,7 +94,11 @@ class User extends DbModel
         // Success message
         $success = "User stored successfully, new user id is: $newUserId.";
 
-        $this->jsonResponse(false, 200, $success, []);
+        if(DATA_FORMAT === 'json') {
+            $this->jsonResponse(false, 200, $success, []);
+        } elseif(DATA_FORMAT === 'xml') {
+            $this->xmlResponse(200, $newUserId, 'insert');
+        }
     }
 
     private function jsonResponse($error, $code, $message, $data)
@@ -119,7 +127,7 @@ class User extends DbModel
         die();
     }
 
-    private function xmlResponse($code, $data)
+    private function xmlResponse($code, $data, $action)
     {
         // Create a new XML document
         $doc = new DOMDocument('1.0');
@@ -128,42 +136,65 @@ class User extends DbModel
         $root = $doc->createElement('data');
         $root = $doc->appendChild($root);
 
-        // Loop through each data item and create a new XML element for it
-        foreach ($data as $item) {
-            $dataItem = $doc->createElement('user');
-            $dataItem = $root->appendChild($dataItem);
-            
-            $id = $doc->createElement('id');
-            $id->appendChild($doc->createTextNode($item->ID));
-            $dataItem->appendChild($id);
-            
-            $firstName = $doc->createElement('first-name');
-            $firstName->appendChild($doc->createTextNode($item->FirstName));
-            $dataItem->appendChild($firstName);
-            
-            $lastName = $doc->createElement('last-name');
-            $lastName->appendChild($doc->createTextNode($item->LastName));
-            $dataItem->appendChild($lastName);
-            
-            $email = $doc->createElement('email');
-            $email->appendChild($doc->createTextNode($item->Email));
-            $dataItem->appendChild($email);
+        if($code === 200) {
 
-            $country = $doc->createElement('country');
-            $country->appendChild($doc->createTextNode($item->Country));
-            $dataItem->appendChild($country);
+            if($action == 'get') {
+                // Loop through each data item and create a new XML element for it
+                foreach ($data as $item) {
+                    $dataItem = $doc->createElement('user');
+                    $dataItem = $root->appendChild($dataItem);
+                    
+                    $id = $doc->createElement('id');
+                    $id->appendChild($doc->createTextNode($item->ID));
+                    $dataItem->appendChild($id);
+                    
+                    $firstName = $doc->createElement('first-name');
+                    $firstName->appendChild($doc->createTextNode($item->FirstName));
+                    $dataItem->appendChild($firstName);
+                    
+                    $lastName = $doc->createElement('last-name');
+                    $lastName->appendChild($doc->createTextNode($item->LastName));
+                    $dataItem->appendChild($lastName);
+                    
+                    $email = $doc->createElement('email');
+                    $email->appendChild($doc->createTextNode($item->Email));
+                    $dataItem->appendChild($email);
 
-            $city = $doc->createElement('city');
-            $city->appendChild($doc->createTextNode($item->City));
-            $dataItem->appendChild($city);
+                    $country = $doc->createElement('country');
+                    $country->appendChild($doc->createTextNode($item->Country));
+                    $dataItem->appendChild($country);
 
-            $created = $doc->createElement('created');
-            $created->appendChild($doc->createTextNode($item->Created));
-            $dataItem->appendChild($created);
+                    $city = $doc->createElement('city');
+                    $city->appendChild($doc->createTextNode($item->City));
+                    $dataItem->appendChild($city);
 
-            $updated = $doc->createElement('updated');
-            $updated->appendChild($doc->createTextNode($item->Updated));
-            $dataItem->appendChild($updated);
+                    $created = $doc->createElement('created');
+                    $created->appendChild($doc->createTextNode($item->Created));
+                    $dataItem->appendChild($created);
+
+                    $updated = $doc->createElement('updated');
+                    $updated->appendChild($doc->createTextNode($item->Updated));
+                    $dataItem->appendChild($updated);
+                }
+
+            }
+
+            if($action == 'insert') {
+                $dataItem = $doc->createElement('user');
+                $dataItem = $root->appendChild($dataItem);
+                $id = $doc->createElement('id');
+                $id->appendChild($doc->createTextNode("User stored successfully, new user id is: " . $data));
+                $dataItem->appendChild($id);
+            }
+            
+        } else {
+            if($action == 'insert') {
+                $dataItem = $doc->createElement('error');
+                $dataItem = $root->appendChild($dataItem);
+                $message = $doc->createElement('message');
+                $message->appendChild($doc->createTextNode($data));
+                $dataItem->appendChild($message);
+            }
         }
 
         // Set the content type header to XML
@@ -202,7 +233,7 @@ class User extends DbModel
         if(DATA_FORMAT === 'json') {
             $this->jsonResponse(false, 200, $msg, $data);
         } elseif(DATA_FORMAT === 'xml') {
-            $this->xmlResponse(200, $data);
+            $this->xmlResponse(200, $data, 'get');
         }
     }
 
@@ -257,7 +288,7 @@ class User extends DbModel
         if(DATA_FORMAT === 'json') {
             $this->jsonResponse(false, 200, $msg, [$user]);
         } elseif(DATA_FORMAT === 'xml') {
-            $this->xmlResponse(200, [$user]);
+            $this->xmlResponse(200, [$user], 'get');
         }
     }
 }

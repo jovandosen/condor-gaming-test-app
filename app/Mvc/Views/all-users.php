@@ -11,25 +11,25 @@
         <div id="user-data-container">
             <div id="user-form">
                 <div class="user-data-header">
-                    <h3>Add User</h3>
+                    <h3 id="user-crud-title">Add User</h3>
                 </div>
-                <form action="users" method="POST">
+                <form action="users" method="POST" id="user-form" name="user-form-el">
                     <div class="form-element">
-                        <input type="text" name="fname" autocomplete="off" placeholder="First name...">
+                        <input type="text" name="fname" id="fname" autocomplete="off" placeholder="First name...">
                     </div>
                     <div class="form-element">
-                        <input type="text" name="lname" autocomplete="off" placeholder="Last name...">
+                        <input type="text" name="lname" id="lname" autocomplete="off" placeholder="Last name...">
                     </div>
                     <div class="form-element">
-                        <input type="text" name="email" autocomplete="off" placeholder="Email address...">
+                        <input type="text" name="email" id="email" autocomplete="off" placeholder="Email address...">
                     </div>
                     <div class="form-element">
-                        <input type="text" name="country" autocomplete="off" placeholder="Country...">
+                        <input type="text" name="country" id="country" autocomplete="off" placeholder="Country...">
                     </div>
                     <div class="form-element">
-                        <input type="text" name="city" autocomplete="off" placeholder="City...">
+                        <input type="text" name="city" id="city" autocomplete="off" placeholder="City...">
                     </div>
-                    <div class="form-element">
+                    <div class="form-element" id="add-user-btn-box">
                         <input type="submit" value="ADD" id="add-user-btn" name="add_user">
                     </div>
                 </form>
@@ -90,6 +90,9 @@
                                                 <input type="hidden" name="method" value="DELETE">
                                                 <input type="hidden" name="userID" value="<?php echo $row->ID; ?>">
                                                 <input type="submit" value="delete">
+                                            </form>
+                                            <form>
+                                                <input type="button" value="update" class="update-user-btn" data-user='<?php echo json_encode($row); ?>'>
                                             </form>
                                         </td>
                                     </tr>

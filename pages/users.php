@@ -11,4 +11,8 @@ if(isset($_POST["add_user"])) {
     $response = $userController->storeUserData();
 }
 
+if(isset($_POST["method"]) && $_POST["method"] == 'PATCH') {
+    $userController->updateUserData();
+}
+
 require_once __DIR__ . '/../app/Mvc/Views/all-users.php';

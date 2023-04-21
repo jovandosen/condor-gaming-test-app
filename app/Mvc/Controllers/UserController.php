@@ -35,4 +35,10 @@ class UserController
         $user = new User();
         return $user->deleteUserDataById();
     }
+
+    public function updateUserData()
+    {
+        $user = new User();
+        return $user->updateUser();
+    }
 }

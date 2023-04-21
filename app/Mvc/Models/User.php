@@ -342,4 +342,9 @@ class User extends DbModel
             $this->xmlResponse(200, $msg, 'delete');
         }
     }
+
+    public function updateUser()
+    {
+        echo 'Well and Good';
+    }
 }

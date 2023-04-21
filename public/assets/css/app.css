@@ -24,7 +24,7 @@
     width: 20%;
 }
 
-#user-form input[type=text], #add-user-btn {
+#user-form input[type=text], #add-user-btn, #update-user-btn {
     padding: 5px;
 }
 

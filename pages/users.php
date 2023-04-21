@@ -6,7 +6,7 @@ $userController = new UserController();
 
 $users = $userController->getAllUsers();
 
-if(isset($_POST["add_user"])) {
+if(isset($_POST["add_user"]) || isset($_POST["curl_post_example"])) {
     $userController = new UserController();
     $response = $userController->storeUserData();
 }

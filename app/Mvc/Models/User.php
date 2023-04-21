@@ -17,6 +17,10 @@ class User extends DbModel
     {
         $users = $this->conn->query("SELECT * FROM Users");
 
+        if(!$users) {
+            throw new Exception('DB ERROR, Users data not received.');
+        }
+
         $this->conn->close();
 
         return $users;
@@ -54,7 +58,7 @@ class User extends DbModel
         $prepared = $this->conn->prepare("INSERT INTO Users(FirstName, LastName, Email, Country, City, Created, Updated) VALUES(?, ?, ?, ?, ?, ?, ?)");
 
         if(!$prepared) {
-            $errors[] = "SQL query is not prepared correctly.";
+            throw new Exception('SQL query is not prepared correctly.');
         }
 
         // current date and time
@@ -64,18 +68,14 @@ class User extends DbModel
         $binded = $prepared->bind_param("sssssss", $firstName, $lastName, $email, $country, $city, $dateTime, $dateTime);
 
         if(!$binded) {
-            $errors[] = "Form data is not binded correctly.";
+            throw new Exception('Form data is not binded correctly.');
         }
 
         // run query, execute function returns true or false
         $executed = $prepared->execute();
 
         if(!$executed) {
-            $errors[] = "Data is not stored correctly.";
-        }
-
-        if($errors) {
-            $this->jsonResponse(true, 401, $errors, []);
+            throw new Exception('Data is not stored correctly.');
         }
 
         // close prepared statement
@@ -88,7 +88,7 @@ class User extends DbModel
         $this->conn->close();
 
         // Success message
-        $success = ["User stored successfully, new user id is: $newUserId."];
+        $success = "User stored successfully, new user id is: $newUserId.";
 
         $this->jsonResponse(false, 200, $success, []);
     }
@@ -183,13 +183,8 @@ class User extends DbModel
     {
         $users = $this->conn->query("SELECT * FROM Users");
 
-        if(DATA_FORMAT === 'json') {
-            if(!$users) {
-                $msg = ["User data not received."];
-                $this->jsonResponse(true, 401, $msg, []);
-            }
-        } elseif(DATA_FORMAT === 'xml') {
-            //
+        if(!$users) {
+            throw new Exception('DB ERROR, Users data not received.');
         }
 
         $this->conn->close();
@@ -202,7 +197,7 @@ class User extends DbModel
             }
         }
 
-        $msg = ["User data received successfully."];
+        $msg = "Users data received successfully.";
 
         if(DATA_FORMAT === 'json') {
             $this->jsonResponse(false, 200, $msg, $data);

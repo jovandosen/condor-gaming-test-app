@@ -4,6 +4,8 @@ use App\Mvc\Controllers\UserController;
 
 $userController = new UserController();
 
-$user = $userController->getUserData();
+if(isset($_POST["method"]) && $_POST["method"] == 'DELETE') {
+    $userController->deleteUserData();
+}
 
-var_dump($user);
+$user = $userController->getUserData();

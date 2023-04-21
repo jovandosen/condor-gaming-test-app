@@ -86,6 +86,11 @@
                                                 <input type="hidden" name="userID" value="<?php echo $row->ID; ?>">
                                                 <input type="submit" value="show">
                                             </form>
+                                            <form action="user" method="POST">
+                                                <input type="hidden" name="method" value="DELETE">
+                                                <input type="hidden" name="userID" value="<?php echo $row->ID; ?>">
+                                                <input type="submit" value="delete">
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>    

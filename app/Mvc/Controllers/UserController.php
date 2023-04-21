@@ -29,4 +29,10 @@ class UserController
         $user = new User();
         return $user->getUserDataById();
     }
+
+    public function deleteUserData()
+    {
+        $user = new User();
+        return $user->deleteUserDataById();
+    }
 }

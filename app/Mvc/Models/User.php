@@ -179,13 +179,21 @@ class User extends DbModel
 
             }
 
+            $details = '';
+
             if($action == 'insert') {
-                $dataItem = $doc->createElement('user');
-                $dataItem = $root->appendChild($dataItem);
-                $id = $doc->createElement('id');
-                $id->appendChild($doc->createTextNode("User stored successfully, new user id is: " . $data));
-                $dataItem->appendChild($id);
+                $details = "User stored successfully, new user id is: " . $data;
             }
+
+            if($action == 'delete') {
+                $details = $data;
+            }
+
+            $dataItem = $doc->createElement('user');
+            $dataItem = $root->appendChild($dataItem);
+            $message = $doc->createElement('message');
+            $message->appendChild($doc->createTextNode($details));
+            $dataItem->appendChild($message);
             
         } else {
             if($action == 'insert') {
@@ -289,6 +297,49 @@ class User extends DbModel
             $this->jsonResponse(false, 200, $msg, [$user]);
         } elseif(DATA_FORMAT === 'xml') {
             $this->xmlResponse(200, [$user], 'get');
+        }
+    }
+
+    public function deleteUserDataById()
+    {
+        if(!isset($_POST["userID"])) {
+            throw new Exception('User ID is not defined.');
+        }
+
+        $id = $_POST["userID"];
+
+        // prepare sql delete query
+        $prepared = $this->conn->prepare("DELETE FROM Users WHERE ID = ?");
+
+        if(!$prepared) {
+            throw new Exception('SQL query is not prepared correctly.');
+        }
+
+        // bind id
+        $binded = $prepared->bind_param("d", $id);
+
+        if(!$binded) {
+            throw new Exception('User ID is not binded correctly.');
+        }
+
+        // execute delete query
+        $executed = $prepared->execute();
+
+        if(!$executed) {
+            throw new Exception('SQL query failed to execute.');
+        }
+
+        $prepared->close();
+
+        // close connection
+        $this->conn->close();
+
+        $msg = "User with id: " . $id . " deleted successfully.";
+
+        if(DATA_FORMAT === 'json') {
+            $this->jsonResponse(false, 200, $msg, []);
+        } elseif(DATA_FORMAT === 'xml') {
+            $this->xmlResponse(200, $msg, 'delete');
         }
     }
 }

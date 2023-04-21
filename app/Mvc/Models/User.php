@@ -184,7 +184,7 @@ class User extends DbModel
                     $details = "User stored successfully, new user id is: " . $data;
                 }
 
-                if($action == 'delete') {
+                if($action == 'delete' || $action == 'update') {
                     $details = $data;
                 }
 
@@ -345,6 +345,75 @@ class User extends DbModel
 
     public function updateUser()
     {
-        echo 'Well and Good';
+        if(!isset($_POST["userID"])) {
+            throw new Exception('User ID is not defined.');
+        }
+
+        // Collect form data
+        $firstName = $_POST["fname"];
+        $lastName = $_POST["lname"];
+        $email = $_POST["email"];
+        $country = $_POST["country"];
+        $city = $_POST["city"];
+
+        // Validate form data
+        $errors = [];
+
+        if(empty($firstName)) {
+            $errors[] = "First Name can not be empty.";
+        }
+
+        if(empty($lastName)) {
+            $errors[] = "Last Name can not be empty.";
+        }
+
+        if(empty($email)) {
+            $errors[] = "Email can not be empty.";
+        }
+
+        if($errors) {
+            if(DATA_FORMAT === 'json') {
+                $this->jsonResponse(true, 401, $errors, []);
+            } elseif(DATA_FORMAT === 'xml') {
+                $this->xmlResponse(401, "Missing data.", 'update');
+            }
+        }
+
+        $id = (int) $_POST["userID"];
+
+        // current date and time
+        $dateTime = date('Y-m-d H:i:s');
+
+        // prepare sql update query
+        $prepared = $this->conn->prepare("UPDATE Users SET FirstName = ?, LastName = ?, Email = ?, Country = ?, City = ?, Updated = ? WHERE ID = ?");
+
+        if(!$prepared) {
+            throw new Exception('SQL query is not prepared correctly.');
+        }
+
+        $binded = $prepared->bind_param("ssssssi", $firstName, $lastName, $email, $country, $city, $dateTime, $id);
+
+        if(!$binded) {
+            throw new Exception('Form data is not binded correctly.');
+        }
+
+        $executed = $prepared->execute();
+
+        if(!$executed) {
+            throw new Exception('Data is not updated correctly.');
+        }
+
+        $prepared->close();
+
+        $this->conn->close();
+
+        // Success message
+        $success = "User updated successfully.";
+
+        if(DATA_FORMAT === 'json') {
+            $this->jsonResponse(false, 200, $success, []);
+        } elseif(DATA_FORMAT === 'xml') {
+            $this->xmlResponse(200, $success, 'update');
+        }
     }
 }

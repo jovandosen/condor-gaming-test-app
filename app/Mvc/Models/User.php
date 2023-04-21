@@ -177,23 +177,23 @@ class User extends DbModel
                     $dataItem->appendChild($updated);
                 }
 
+            } else {
+                $details = '';
+
+                if($action == 'insert') {
+                    $details = "User stored successfully, new user id is: " . $data;
+                }
+
+                if($action == 'delete') {
+                    $details = $data;
+                }
+
+                $dataItem = $doc->createElement('user');
+                $dataItem = $root->appendChild($dataItem);
+                $message = $doc->createElement('message');
+                $message->appendChild($doc->createTextNode($details));
+                $dataItem->appendChild($message);
             }
-
-            $details = '';
-
-            if($action == 'insert') {
-                $details = "User stored successfully, new user id is: " . $data;
-            }
-
-            if($action == 'delete') {
-                $details = $data;
-            }
-
-            $dataItem = $doc->createElement('user');
-            $dataItem = $root->appendChild($dataItem);
-            $message = $doc->createElement('message');
-            $message->appendChild($doc->createTextNode($details));
-            $dataItem->appendChild($message);
             
         } else {
             if($action == 'insert') {

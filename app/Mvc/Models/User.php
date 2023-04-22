@@ -101,7 +101,7 @@ class User extends DbModel
         }
     }
 
-    private function jsonResponse($error, $code, $message, $data)
+    private function jsonResponse($error, $code, array|string $message, $data)
     {
         // Define final response
         $finalResponse = [];
@@ -127,7 +127,7 @@ class User extends DbModel
         die();
     }
 
-    private function xmlResponse($code, $data, $action)
+    private function xmlResponse($code, array|string|int $data, $action)
     {
         // Create a new XML document
         $doc = new DOMDocument('1.0');

@@ -16,7 +16,8 @@ $routes = [
     '/curl-post' => 'curl-post',
     '/curl-get' => 'curl-get',
     '/curl-get-all-users' => 'curl-get-all-users',
-    '/curl-delete' => 'curl-delete'
+    '/curl-delete' => 'curl-delete',
+    '/curl-patch' => 'curl-patch'
 ];
 
 $routeFound = false;

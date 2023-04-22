@@ -11,7 +11,7 @@ if(isset($_POST["add_user"]) || isset($_POST["curl_post_example"])) {
     $response = $userController->storeUserData();
 }
 
-if(isset($_POST["method"]) && $_POST["method"] == 'PATCH') {
+if((isset($_POST["method"]) && $_POST["method"] == 'PATCH') || isset($_POST["curl_patch_example"])) {
     $userController->updateUserData();
 }
 

@@ -2,7 +2,7 @@
 
 $ch = curl_init();
 
-curl_setopt($ch, CURLOPT_URL,"http://condor-gaming-test-app.project/users");
+curl_setopt($ch, CURLOPT_URL, APP_URL . "/users");
 curl_setopt($ch, CURLOPT_POST, 1);
 
 curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(array(

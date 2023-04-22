@@ -14,3 +14,6 @@ define('APP_LANG', 'en');
 
 // Define app charset
 define('APP_CHARSET', 'UTF-8');
+
+// Define app url
+define('APP_URL', 'http://condor-gaming-test-app.project');

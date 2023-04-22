@@ -9,3 +9,6 @@ $model = new Model("Alice", 30, "alice@example.com");
 echo "Name: " . $model->name;
 echo "Age: " . $model->age;
 echo "Email: " . $model->email;
+
+// example of Match Expression
+echo $model->test('foo');

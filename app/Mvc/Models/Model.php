@@ -10,4 +10,17 @@ class Model
         public int $age,
         public ?string $email = null
     ) {}
+
+    // example of Match Expression
+    public function test($val)
+    {
+        $message = match($val) {
+            "foo" => "Foo content",
+            "bar" => "Bar content",
+            "baz" => "Baz content",
+            default => "Default content",
+        };
+
+        return $message;
+    }
 }

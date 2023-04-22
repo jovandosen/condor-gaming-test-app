@@ -95,7 +95,9 @@ class User extends DbModel
         $success = "User stored successfully, new user id is: $newUserId.";
 
         if(DATA_FORMAT === 'json') {
-            $this->jsonResponse(false, 200, $success, []);
+            // $this->jsonResponse(false, 200, $success, []);
+            // Named arguments example
+            $this->jsonResponse(code: 200, data: [], error: false, message: $success);
         } elseif(DATA_FORMAT === 'xml') {
             $this->xmlResponse(200, $newUserId, 'insert');
         }
